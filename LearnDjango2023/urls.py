@@ -23,5 +23,8 @@ urlpatterns = [
     path('index/', views.index),
     # 登陆功能
     path('login/', views.login),
-    path('register/',views.reg)
+    path('register/', views.reg),
+    path('userlist/', views.userlist),
+    path('edituser/',views.edituser),
+    path('deleteuser/',views.deleteuser)
 ]

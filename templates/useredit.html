@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <title>edit</title>
+</head>
+<body>
+    <h1 class="text-center">编辑</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form action="" method="post">
+                    <p>username:<input type="text" name="username" class="form-control" value="{{ edit_obj.username }}"></p>
+                    <p>passwort:<input type="password" name="password" class="form-control" value="{{ edit_obj.password }}"></p>
+                    <input type="submit" class="btn btn-success block">
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

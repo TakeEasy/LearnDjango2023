@@ -45,13 +45,50 @@ def login(request):
 
 
 def reg(request):
-    if request.method =='POST':
+    if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        #第一种增加
-        #res = models.User.objects.create(username=username,password=password)
-        #第二种增加
-        userobj = models.User(username=username,password=password)
+        # 第一种增加
+        # res = models.User.objects.create(username=username,password=password)
+        # 第二种增加
+        userobj = models.User(username=username, password=password)
         userobj.save()
-        #print(res)
+        # print(res)
     return render(request, 'register.html')
+
+
+def userlist(request):
+    # data = models.User.objects.filter()
+    user_queryset = models.User.objects.all()
+    return render(request, 'userlist.html', locals())
+
+
+def edituser(request):
+    edit_id = request.GET.get('user_id')
+    edit_obj = models.User.objects.filter(id=edit_id).first()
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        #修改数据放式1
+        #models.User.objects.filter(id=edit_id).update(username=username,password=password)
+        #修改方式2
+        """
+            字段特别多的时候 效率非常低
+            因为是从头到尾 所有字段全部重新赋值
+        """
+        edit_obj.username=username
+        edit_obj.password=password
+        edit_obj.save()
+        return redirect('/userlist/')
+
+
+    return render(request, 'useredit.html', locals())
+
+
+def deleteuser(request):
+    delete_id = request.GET.get('user_id')
+    delete_obj = models.User.objects.filter(id=delete_id).first()
+
+    models.User.objects.filter(id=delete_id).delete()
+
+    return redirect('/userlist/')
