@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('index/', views.index),
     # 登陆功能
-    path('login/', views.login)
+    path('login/', views.login),
+    path('register/',views.reg)
 ]
