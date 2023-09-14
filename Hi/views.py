@@ -18,4 +18,11 @@ def index(request):
 
 
 def login(request):
-    return render(request, 'login.html')
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method=="GET":
+        return render(request, 'login.html')
+
