@@ -15,8 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path, include
 from Hi import views
+# from Hi import urls as Hi_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,9 @@ urlpatterns = [
     path('login/', views.login),
     path('register/', views.reg),
     path('userlist/', views.userlist),
-    path('edituser/',views.edituser),
-    path('deleteuser/',views.deleteuser)
+    path('edituser/', views.edituser),
+    path('deleteuser/', views.deleteuser),
+    path('bibable/<int:a>/<int:b>/<int:c>/', views.bibable, name='bibale'),
+    #path('hi/', include(Hi_urls))
+    path('hi/', include('Hi.urls'),namespace='Hi')
 ]

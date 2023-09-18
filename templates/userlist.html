@@ -29,6 +29,7 @@
                             <td>
                                 <a href="/edituser/?user_id={{ user_obj.id }}" class="btn btn-primary btn-sm">编辑</a>
                                 <a href="/deleteuser/?user_id={{ user_obj.id }}" class="btn btn-danger btn-sm">删除</a>
+                                <a href="{% url 'bibale'  1 2 3 %}" class="btn btn-danger btn-sm">反向解析</a>
                             </td>
                         </tr>
                     {% endfor %}

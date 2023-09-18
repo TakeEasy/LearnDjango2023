@@ -1,5 +1,6 @@
-from django.shortcuts import render, HttpResponse, redirect
+from django.shortcuts import render, HttpResponse, redirect, reverse
 from Hi import models
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -69,18 +70,17 @@ def edituser(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        #修改数据放式1
-        #models.User.objects.filter(id=edit_id).update(username=username,password=password)
-        #修改方式2
+        # 修改数据放式1
+        # models.User.objects.filter(id=edit_id).update(username=username,password=password)
+        # 修改方式2
         """
             字段特别多的时候 效率非常低
             因为是从头到尾 所有字段全部重新赋值
         """
-        edit_obj.username=username
-        edit_obj.password=password
+        edit_obj.username = username
+        edit_obj.password = password
         edit_obj.save()
         return redirect('/userlist/')
-
 
     return render(request, 'useredit.html', locals())
 
@@ -92,3 +92,56 @@ def deleteuser(request):
     models.User.objects.filter(id=delete_id).delete()
 
     return redirect('/userlist/')
+
+
+def bibable(request, a, b, c):
+    print(reverse('bibale', args=(1, 2, 3)))
+    print(reverse('bibale', kwargs={'a': 1, 'b': 2, 'c': 3}))
+    print(reverse('Hi:index'))
+    return HttpResponse(f'{a},{b},{c}')
+
+
+import json
+
+
+def ab_json(request):
+    user_dict = {'username': 'year帅帅帅', 'password': 123, 'hobby': 'reading'}
+    l = [1, 2, 3, 45, 5]
+    # json_str = json.dumps(user_dict,ensure_ascii=False)
+    # return HttpResponse(json_str)
+    # return JsonResponse(l,safe=False) 默认只能序列化字典,想序列化别的 需要加safe=False
+    return JsonResponse(user_dict, json_dumps_params={'ensure_ascii': False})
+
+
+def fileuploads(request):
+    if request.method == 'POST':
+        print(request.body)  # 原生的浏览器发过来的二进制数据
+        print(request.POST)  # 获取普通数据 键值对
+        print(request.FILES)  # 获取文件数据
+        file_obj = request.FILES.get('file')
+        print(file_obj.name)
+        with open(file_obj.name, 'wb') as f:
+            for line in file_obj.chunks():  # 推荐加上chunks方法,其实差不多
+                f.write(line)
+
+    print(request.path)  # 只能拿到访问请求的路由路径
+    print(request.path_info)
+    print(request.get_full_path())  # 包括?后面的参数 完整的url
+
+    return render(request, 'fileuploads.html')
+
+
+from django.views import View
+
+
+
+"""
+这种叫CBV class base view
+跟FBV 各有千秋
+"""
+class MyLogin(View):   #urls里面配置 要写 views.MyLogin.as_view()
+    def get(self, request):
+        return HttpResponse("get 方法")
+
+    def post(self, request):
+        return HttpResponse("post 方法")
