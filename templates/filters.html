@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <title>Filter</title>
+</head>
+<body>
+<h1>过滤器</h1>
+<p>统计长度{{ s|length }}</p>
+<p>默认值(b是True就是b 不是就是默认值):{{ b|default:'啥也没有' }}</p>
+<p>文件大小:{{ file_size|filesizeformat }}</p>
+<p>日期格式化:{{ current_time|date:'Y-m-d H:i:s' }}</p>
+<p>切片:{{ l|slice:'0:4:2' }}</p>
+<p>切取字符(包括...):{{ s|truncatechars:10 }}</p>
+<p>切取单词(不包含... 按照空格切):{{ s|truncatewords:9 }}</p>
+<p>移除特定字符:{{ s|cut:'' }}</p>
+<p>拼接操作:{{ l|join:'$' }}</p>
+<p>拼接操作(加法):{{ s|add:"heihei" }}</p>
+<p>取消转译:{{ hhh|safe }}</p>
+<hr/>
+<h1>标签</h1>
+{% for foo in l %}
+    {#    自带变量名#}
+    <p>{{ forloop }}</p>
+{% endfor %}
+
+{% if b %}
+    <p>666</p>
+{% elif s %}
+
+{% else %}
+
+{% endif %}
+
+{% for foo in l %}
+    {% if forloop.first %}
+        <p>666</p>
+    {% elif forloop.last %}
+        <p>888</p>
+    {% else %}
+        <p>{{ foo }}</p>
+    {% endif %}
+{% empty %}
+    <p>无法循环</p>
+{% endfor %}
+
+<p>起别名{% with l.0 as nb %} {{ nb }} {% endwith %}</p>
+<hr/>
+<h1>自定义标签 过滤器(最多两个参数 前后) inclusion_tag</h1>
+{% load mytag %}
+<p>{{ s|baby:'hahaha' }}</p>
+<p>{% plus 'a' 'b' 'c' 'd' %}</p>
+
+{% userlist 10 %}
+
+<hr/>
+<h1>模板继承</h1>
+{% extends 'userlist.html' %}
+{% block content %}
+    <h1>模板内容</h1>
+{% endblock %}
+<h1>模板导入</h1>
+{% include 'userlist.html' %}
+</body>
+</html>

@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, HttpResponse, redirect, reverse
 from Hi import models
 from django.http import JsonResponse
@@ -133,15 +135,28 @@ def fileuploads(request):
 
 from django.views import View
 
-
-
 """
 这种叫CBV class base view
 跟FBV 各有千秋
 """
-class MyLogin(View):   #urls里面配置 要写 views.MyLogin.as_view()
+
+
+class MyLogin(View):  # urls里面配置 要写 views.MyLogin.as_view()
     def get(self, request):
         return HttpResponse("get 方法")
 
     def post(self, request):
         return HttpResponse("post 方法")
+
+
+def filters(request):
+    s = 'hahahahaha'
+    file_size = 123123123
+    current_time = datetime.datetime.now()
+    l = [1, 2, 3, 4, 5, 6, 7, 8]
+    hhh = '<h1>我的乖乖</h1>'
+
+    from django.utils.safestring import mark_safe
+    hhh2 = '<h1>我的乖乖2</h1>'
+    safe_hhh = mark_safe(hhh2)
+    return render(request, 'filters.html', locals())
