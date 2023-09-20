@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-import views
+from Hi import views
 
 urlpatterns = [
     path('HiAdmin/', views.index,name='index'),
