@@ -249,6 +249,155 @@ def main():
     就可以用__进行无限跨表查询 就是无限 join表
     """
 
+    # # 聚合查询 五个聚合函数的使用 先导入 aggregate
+    # """
+    # 通常配合分组一起使用的
+    # """
+    # from django.db.models import Max, Min, Sum, Count, Avg
+    # # 所有书的平均价格
+    # res = models.Book.objects.aggregate(Avg('price'))
+    # print(res)
+    # # 可以在一起使用
+    # res = models.Book.objects.aggregate(Max('price'), Min('price'), Sum('price'), Count('prict'))
+    # print(res)
+
+    #
+
+    # # 分组查询 annotate
+    # """
+    # mysql分组查询哪些特点
+    #     分组之后只能获取到分组的依据 组内其他字段都无法直接获取了
+    #         严格模式
+    #             ONLY_FULL_GROUP_BY
+    #
+    # """
+    # # 统计每一本书的作者个数
+    # res = models.Book.objects.annotate(author__num=Count('authors')).values('title',
+    #                                                                         'authors__num')  # models后面点什么 就是按什么分组
+    # print(res)
+    # # 统计每个出版社卖的最便宜的书的价格
+    # res = models.Publish.objects.annotate(min_price=Min('book__price')).values('name', 'min_price')
+    # print(res)
+    #
+    # # 统计不止一个作者的图书 只要结果是queryset对象 就可以无限点queryset的方法进行 过滤 筛选
+    # res = models.Book.objects.annotate(author_count=Count('authors')).filter(author_count__gt=1).values('title',
+    #                                                                                                     'author_count')
+    # print(res)
+    #
+    # # 查询每个作者出的书的总价格
+    # res = models.Author.objects.annotate(book_allprice=Sum('book__price')).values('name', 'book_allprice')
+    # print(res)
+
+    """
+    如果想按指定的字段分组 该如何处理
+        models.Book.objects.values('price').annotate()
+    后续BBS会使用
+    
+    如果分组查询怎么样都报错 是应为数据库开了严格模式 ONLY_FULL_GROUP_BY
+    """
+
+    #
+
+    # # F和Q查询
+    # # 查询卖出大于库存的书
+    # # F查询 能够直接帮助你获取表中某个字段的对应数据
+    # from django.db.models import F
+    # res = models.Book.objects.filter(maichu__gt=F('kucun'))
+    # print(res)
+    # # 将所有书籍的价格提升50快
+    # models.Book.objects.update(price=F('price') + 500)
+    # # 将所有书名字后面加爆款两个字
+    # """
+    # 在操作字符类型的数据的时候 F不能够直接做到字符串拼接
+    # """
+    # from django.db.models.functions import Concat
+    # from django.db.models import Value
+    # models.Book.objects.update(title=Concat(F('title'), Value('爆爆')))
+
+    #
+
+    # # Q查询
+    # # 查询卖出数大于100 或者价格小于600的书
+    # from django.db.models import Q
+    # res = models.Book.objects.filter(Q(maichu__gt=100), Q(price__lt=600))  # 逗号 and
+    # res = models.Book.objects.filter(Q(maichu__gt=100) | Q(price__lt=600))  # | or
+    # res = models.Book.objects.filter(~Q(maichu__gt=100) | Q(price__lt=600))  # ~ not
+    # print(res)
+    #
+    # # Q的高阶用法 能够将查询条件的左边变成字符串的形式
+    # q = Q()
+    # q.connector = 'or'  # 默认一个q对象内是and链接
+    # q.children.append(('maichu__gt', 100))
+    # q.children.append(('price__lt', 600))
+    # res = models.Book.objects.filter(q)
+    # print(res)
+
+    #
+
+    """
+    django中开启事务
+    ACID
+        原子性
+            不可分割的最小单位
+        一致性
+            和原子性相辅相成
+        隔离性
+            事务之间互相不干扰
+        持久性
+            事务一旦确认永久生效
+        事务回滚
+            rollback
+        事务确认
+            commit
+    """
+    # from django.db import transaction
+    # with transaction.atomic():
+    #     try:
+    #         # sql1
+    #         # sql2
+    #         # 在with代码块内的所有orm操作都属于一个事务
+    #         print("")
+    #     except Exception as e:
+    #         print(e)
+
+    #
+
+    """
+    数据库查询优化
+    only和defer
+    select_related和prefetch_related
+    
+    orm语句特点
+        惰性查询
+            如果你仅仅只写了语句不用 orm不会去执行
+        
+    """
+    # # 获取所有书的名字
+    # res = models.Book.objects.only('title')
+    # for i in res:
+    #     print(i.title)  # 点only括号内的字段不会走数据库
+    #     print(i.price)  # 点没有的 又回去数据库查
+    #
+    # res = models.Book.objects.defer('title')  # defer和only刚好相反 括号里的不在查询的对象里
+    #
+    # # select_related 和 prefetch_related 和跨表有关
+    # res = models.Book.objects.all()
+    # for i in res:
+    #     print(i.publish.name)  # 每次循环都要去数据库里查询一次
+    #
+    # # select_related括号内只能放外键字段 一对多 一对一
+    # res = models.Book.objects.select_related('publish')  # 直接用inner join 查出所有
+    # for i in res:
+    #     print(i.publish.name)
+
+    """
+    prefetch_related 该方法用的子查询
+        将子查询结果 封装到对象里 感觉像一次性的.
+    """
+    # res = models.Book.objects.prefetch_related('publish') # 用子查询
+    # for i in res:
+    #     print(i.publish.name)
+
 
 if __name__ == '__main__':
     main()

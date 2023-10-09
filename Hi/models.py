@@ -9,6 +9,52 @@ mysql 的原生操作 看数据库learnPython2023里面保存的查询 practiceS
 orm 的操作 看Hi.tests.py
 """
 
+"""
+orm中常用的字段和参数
+AutoField
+    主键字段 primary_key=True
+CharField        varchar
+    verbose_name 字段的可读名
+    max_length 长度
+IntegerField    int
+BigIntegerField bigint
+DecimalField
+    max_digits=8
+    decimal_places=2
+EmailField   varchar(254)
+
+DateField    date
+DateTimeField   datetime
+    auto_now: 每次修改数据更新时间
+    auto_now_add: 每次创建时添加时间 后面不会改了
+
+BooleanField   
+    传布尔值 数据库里会存0/1 
+
+TextField   
+    该字段可以用来存大段内容 比如文章内容 没有字数限制
+FileField 
+    upload_to='/data' 给该字段传一个文件对象 会自动将文件保存到该目录下 然后存文件路径 
+    
+    
+ForeignKey(unique=True) === OneToOneField()  django推荐使用后面
+    to_field 默认链接主键
+    on_delete 关联删除行为 
+"""
+
+"""
+django 还支持自定义字段
+"""
+
+
+class MyCharField(models.Field):
+    def __int__(self, max_length, *args, **kwargs):
+        self.max_length = max_length
+        super().__init__(max_length, *args, **kwargs)
+
+    def db_type(self, connection):
+        return 'char(%s)' % self.max_length
+
 
 class User(models.Model):
     # 由于一张表必须要有一个主键字段 并且一般都叫id
@@ -46,6 +92,8 @@ class User(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=8, decimal_places=2)
+    kucun = models.IntegerField(default=10000)
+    maichu = models.IntegerField(default=0)
     publish_date = models.DateField(auto_now_add=True)
     """
     book publish 一对多 外键放在多的一边

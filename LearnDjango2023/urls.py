@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path, include
 from Hi import views
+
 # from Hi import urls as Hi_urls
 
 urlpatterns = [
@@ -29,6 +30,7 @@ urlpatterns = [
     path('edituser/', views.edituser),
     path('deleteuser/', views.deleteuser),
     path('bibable/<int:a>/<int:b>/<int:c>/', views.bibable, name='bibale'),
-    #path('hi/', include(Hi_urls))
-    path('hi/', include('Hi.urls'))
+    # path('hi/', include(Hi_urls))
+    path('hi/', include('Hi.urls')),
+    path('Library', include('Library.urls'))
 ]
