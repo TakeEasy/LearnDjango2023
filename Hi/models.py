@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 
+
 # Create your models here.
 
 """
@@ -67,6 +68,17 @@ class User(models.Model):
     # password = models.IntegerField(null=True)
     password = models.CharField(max_length=64, verbose_name='密码', null=True)
     age = models.IntegerField(verbose_name="年龄", default=18)
+
+    gender_choices = (
+        (1, '男'),
+        (2, '女'),
+        (3, '其他')
+    )
+    """
+    user_obj.get_getnder_display()
+    """
+    gender = models.IntegerField(choices=gender_choices, default=1)
+
     info = models.CharField(max_length=255, verbose_name='个人介绍', null=True)
     hobby = models.CharField(max_length=255, verbose_name='爱好', default='reading')
     register_time = models.DateTimeField(auto_now_add=True)

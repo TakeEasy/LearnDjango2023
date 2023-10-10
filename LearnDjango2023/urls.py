@@ -31,6 +31,6 @@ urlpatterns = [
     path('deleteuser/', views.deleteuser),
     path('bibable/<int:a>/<int:b>/<int:c>/', views.bibable, name='bibale'),
     # path('hi/', include(Hi_urls))
-    path('hi/', include('Hi.urls')),
-    path('Library', include('Library.urls'))
+    # path('hi/', include('Hi.urls')),
+    path('Library/', include('Library.urls'))
 ]

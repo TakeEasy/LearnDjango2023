@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<input type="text" id="d1">+
+<input type="text" id="d2">=
+<input type="text" id="d3">
+<p>
+    <button id="btn">点我</button>
+</p>
+<script>
+    // 给按钮绑定点击事件
+    $('#btn').click(function () {
+        $.ajax({
+            // 指定向哪发送请求
+            url: '',
+            // 请求放式 小写就行
+            typ: 'post',
+            // 数据
+            {#data:{'username':'year','password':123}#}
+            data: {'i1': $('#d1').val(), 'i2': $('#d2').val()},
+            {#dataType: true,#}
+            // 回调函数 给你返回结果的时候自动调用，args接受后端返回结果
+            // 后端如果用 httpResponse返回数据 回调函数不会自动帮你反序列化 自己用JSON.parse 或者加参数dataType:true
+            // 如果用 JsonResponse返回数据 回调函数会自动帮你反序列化
+            success: function (args) {
+                {#alert(args)#}
+                //通过dom操作 把返回值放到第三个input
+                {#$('#d3').val(args)#}
+                console.log(typeof args)
+                //如果没有设置dataType:true 需要自己转换
+                {#JSON.parse(args)#}
+                $('#d3').val(args.msg)
+            }
+
+
+        })
+    })
+</script>
+</body>
+</html>

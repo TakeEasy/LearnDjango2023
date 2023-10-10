@@ -4,6 +4,8 @@ from django.shortcuts import render, HttpResponse, redirect, reverse
 from Hi import models
 from django.http import JsonResponse
 
+import json
+
 
 # Create your views here.
 
@@ -160,3 +162,17 @@ def filters(request):
     hhh2 = '<h1>我的乖乖2</h1>'
     safe_hhh = mark_safe(hhh2)
     return render(request, 'filters.html', locals())
+
+
+def ab_ajax(request):
+    if request.method == "POST":
+        print(request.POST)
+        i1 = request.POST.get('i1')
+        i2 = request.POST.get('i2')
+        i3 = int(i1) + int(i2)
+        print(i3)
+        d = {'code': 100, 'msg': i3}
+        # return HttpResponse(json.dumps(d))
+        return JsonResponse(d)
+    return render(request, 'ab_ajax.html')
+
