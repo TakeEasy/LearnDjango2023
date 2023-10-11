@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+<p>username:<input type="text" id="d1"></p>
+<p>password:<input type="password" id="d2"></p>
+<p><input type="file" id="d3"></p>
+<button class="btn btn-info" id="d4">点我</button>
+<script>
+    $('#d4').on('click',function (){
+        // 需要先利用formdata 内置对象
+        let formDataObj = new FormData();
+        // 添加普通的键值对
+        formDataObj.append('username',$('#d1').val());
+        formDataObj.append('password',$('#d2').val());
+        // 添加文件
+        formDataObj.append('myfile',$('#d3')[0].files[0]);
+        // 将对象基于ajax 发送给后端
+        $.ajax({
+            url:'',
+            type:'post',
+            data:formDataObj,
+            // ajax 发送文件必须要指定的参数
+            contentType:false, //不需要使用任何编码 django后端能够识别任何formdata对象
+            processData:false, // 高速浏览器不要对你的数据进行任何的处理
+            success:function (args){
+
+            }
+        })
+
+    })
+</script>
+</body>
+</html>

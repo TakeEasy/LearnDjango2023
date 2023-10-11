@@ -14,7 +14,42 @@ def index(request):
 
 def book_list(request):
     # 先查询出所有的书籍信息
-    book_queryset = models.Book.objects.all()
+    # book_queryset = models.Book.objects.all()
+    # 想访问哪一页
+    book_list = models.Book.objects.all()
+    all_count = book_list.count()
+
+    current_page = request.GET.get('page', 1)  # 如果没有 默认第一页
+    try:
+        current_page = int(current_page)
+    except Exception:
+        current_page = 1
+
+    per_page_num = 10
+
+    start_page = (current_page - 1) * per_page_num
+
+    end_page = current_page * per_page_num
+
+    page_count, more = divmod(all_count, per_page_num)
+    if more:
+        page_count += 1
+
+    html = ''
+    true_current_page = current_page
+    if current_page < 6:
+        current_page = 6
+    range_end = current_page + 6
+    if current_page + 6 > end_page +1:
+        range_end = end_page+1
+    for i in range(current_page - 5, range_end + 6):
+        if true_current_page == i:
+            html += '<li class="active"><a href="?page=%s">%s</a></li>' % (i, i)
+        else:
+            html += '<li><a href="?page=%s">%s</a></li>' % (i, i)
+
+    book_queryset = models.Book.objects.all()[start_page:end_page]
+
     return render(request, 'booklist.html', locals())
 
 
@@ -65,5 +100,16 @@ def book_edit(request, edit_id):
 
 
 def book_delete(request, delete_id):
+    """
+    前后端再用ajax交互的时候 后端通常给ajax返回一个字典格式的数据
+    """
+    if request.is_ajax():
+        if request.method == 'POST':
+            back_dict = {'code': 100, 'msg': ''}
+            delete_id = request.POST.get('delete_id')
+            models.Book.objects.filter(pk=delete_id).delete()
+            back_dict['msg'] = '数据已经删除'
+            return JsonResponse(back_dict)
+
     models.Book.objects.filter(pk=delete_id).delete()
     return redirect('book_list')

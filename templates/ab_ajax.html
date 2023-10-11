@@ -25,9 +25,9 @@
             // 数据
             {#data:{'username':'year','password':123}#}
             data: {'i1': $('#d1').val(), 'i2': $('#d2').val()},
-            {#dataType: true,#}
+            {#dataType: 'JSON',#}
             // 回调函数 给你返回结果的时候自动调用，args接受后端返回结果
-            // 后端如果用 httpResponse返回数据 回调函数不会自动帮你反序列化 自己用JSON.parse 或者加参数dataType:true
+            // 后端如果用 httpResponse返回数据 回调函数不会自动帮你反序列化 自己用JSON.parse 或者加参数dataType:'JSON'
             // 如果用 JsonResponse返回数据 回调函数会自动帮你反序列化
             success: function (args) {
                 {#alert(args)#}

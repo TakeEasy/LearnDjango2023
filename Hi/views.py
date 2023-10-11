@@ -176,3 +176,43 @@ def ab_ajax(request):
         return JsonResponse(d)
     return render(request, 'ab_ajax.html')
 
+
+def ab_file(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            print(request.POST)
+            print(request.FILES)
+    return render(request, 'ab_file.html')
+
+
+from django.core import serializers
+
+
+def ab_ser(request):
+    user_queryset = models.User.objects.all()
+    # user_list = []
+    # for user_obj in user_queryset:
+    #     tmp = {
+    #         'pk': user_obj.pk,
+    #         'username': user_obj.username,
+    #         'age': user_obj.age,
+    #         'gender': user_obj.get_gender_display()
+    #     }
+    #     user_list.append(tmp)
+    # return JsonResponse(user_list, safe=False)
+    # return render(request, '')
+    res = serializers.serialize('json', user_queryset)
+    return HttpResponse(res)
+
+
+def ab_pl(request):
+    # for i in range(10000):
+    #     models.Book.objects.create(title='第%s本书'%i)
+    # book_queryset = models.Book.objects.all()
+    book_list = []
+    for i in range(10000):
+        book_obj = models.Book(title='第%s本书' % i)
+        book_list.append(book_obj)
+    models.Book.objects.bulk_create(book_list)
+    book_queryset = models.Book.objects.all()
+    return render(request, '', locals())
