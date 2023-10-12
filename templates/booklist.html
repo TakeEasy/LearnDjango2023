@@ -41,6 +41,7 @@
         {% endfor %}
 
         </tbody>
+        {{ page_obj.page_html|safe }}
     </table>
 {% endblock %}
 
@@ -65,16 +66,16 @@
                 confirmButtonText: '删!',
                 cancelButtonText: '不删了!',
                 reverseButtons: true,
-                showLoaderOnConfirm:true
+                showLoaderOnConfirm: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     // 发 ajax 请求 删除
                     $.ajax({
-                        url:'/book/delete/',
-                        type:'post',
-                        data:{'delete_id':currentBtn.attr('delete_id')},
-                        success:function (args){
-                            if(args.code === 100){
+                        url: '/book/delete/',
+                        type: 'post',
+                        data: {'delete_id': currentBtn.attr('delete_id')},
+                        success: function (args) {
+                            if (args.code === 100) {
                                 swalWithBootstrapButtons.fire(
                                     '删了!',
                                     args.msg,
@@ -83,7 +84,7 @@
                                 //利用dom操作 删除这一行
                                 currentBtn.parent().parent().remove()
 
-                            }else{
+                            } else {
                                 swalWithBootstrapButtons.fire(
                                     '删除失败!',
                                     args.msg,

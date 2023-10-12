@@ -12,43 +12,53 @@ def index(request):
     return render(request, 'Libraryindex.html', locals())
 
 
+from utils.mypage import Pagination
+
+
 def book_list(request):
     # 先查询出所有的书籍信息
     # book_queryset = models.Book.objects.all()
     # 想访问哪一页
-    book_list = models.Book.objects.all()
-    all_count = book_list.count()
+    # book_list = models.Book.objects.all()
+    # all_count = book_list.count()
+    #
+    # current_page = request.GET.get('page', 1)  # 如果没有 默认第一页
+    # try:
+    #     current_page = int(current_page)
+    # except Exception:
+    #     current_page = 1
+    #
+    # per_page_num = 10
+    #
+    # start_page = (current_page - 1) * per_page_num
+    #
+    # end_page = current_page * per_page_num
+    #
+    # page_count, more = divmod(all_count, per_page_num)
+    # if more:
+    #     page_count += 1
+    #
+    # html = ''
+    # true_current_page = current_page
+    # if current_page < 6:
+    #     current_page = 6
+    # range_end = current_page + 6
+    # if current_page + 6 > end_page +1:
+    #     range_end = end_page+1
+    # for i in range(current_page - 5, range_end + 6):
+    #     if true_current_page == i:
+    #         html += '<li class="active"><a href="?page=%s">%s</a></li>' % (i, i)
+    #     else:
+    #         html += '<li><a href="?page=%s">%s</a></li>' % (i, i)
+    #
+    # book_queryset = models.Book.objects.all()[start_page:end_page]
+    book_queryset = models.Book.objects.all()
+    current_page = request.GET.get('page', 1)
+    all_count = book_queryset.count()
+    page_obj = Pagination(current_page=current_page, all_count=all_count)
 
-    current_page = request.GET.get('page', 1)  # 如果没有 默认第一页
-    try:
-        current_page = int(current_page)
-    except Exception:
-        current_page = 1
+    page_queryset = book_queryset[page_obj.start:page_obj.end]
 
-    per_page_num = 10
-
-    start_page = (current_page - 1) * per_page_num
-
-    end_page = current_page * per_page_num
-
-    page_count, more = divmod(all_count, per_page_num)
-    if more:
-        page_count += 1
-
-    html = ''
-    true_current_page = current_page
-    if current_page < 6:
-        current_page = 6
-    range_end = current_page + 6
-    if current_page + 6 > end_page +1:
-        range_end = end_page+1
-    for i in range(current_page - 5, range_end + 6):
-        if true_current_page == i:
-            html += '<li class="active"><a href="?page=%s">%s</a></li>' % (i, i)
-        else:
-            html += '<li><a href="?page=%s">%s</a></li>' % (i, i)
-
-    book_queryset = models.Book.objects.all()[start_page:end_page]
 
     return render(request, 'booklist.html', locals())
 

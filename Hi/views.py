@@ -216,3 +216,93 @@ def ab_pl(request):
     models.Book.objects.bulk_create(book_list)
     book_queryset = models.Book.objects.all()
     return render(request, '', locals())
+
+
+def ab_form(request):
+    back_dic = {'username': '', 'password': ''}
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if 'aaa' in username:
+            back_dic['username'] = '违规字符串'
+        if len(password) < 3:
+            back_dic['password'] = '密码长度小于3'
+    return render(request, 'ab_form.html', locals())
+
+
+from django import forms
+from django.core.validators import RegexValidator
+
+
+class MyForm(forms.Form):
+    # initial 默认值
+    # required 控制字段是否必填
+    #
+    username = forms.CharField(min_length=3, max_length=8, lable='用户名',
+                               error_messages={
+                                   'min_length': '用户名最少3位',
+                                   'max_length': '用户名最长8位',
+                                   'required': '必须要填'
+                               },
+                               widget=forms.TextInput(attrs={'class': 'form-control c1 c2', 'username': 'aaa'}))
+    password = forms.CharField(min_length=3, max_length=8, widget=forms.EmailInput)
+    confirm_password = forms.CharField(min_length=3, max_length=8, widget=forms.PasswordInput)
+    email = forms.EmailField(label='邮箱',
+                             error_messages={
+                                 'invalid': '邮箱格式不正确'
+                             })
+    phone = forms.CharField(
+        validators=[RegexValidator(r'^[0-9]+$', '请输入数字'),
+                    RegexValidator(r'^186[0-9]+$', '数字必须以186开头')
+                    ])
+    gender = forms.ChoiceField(
+        choices=((1,'男'),(2,'女')),
+        label='性别',
+        initial=3,
+        widget=forms.RadioSelect()
+    )
+    # 钩子函数
+    # 局部钩子 单个字段
+    def clean_username(self):
+        # 获取输入数据
+        username = self.cleaned_data.get('username')
+        if '666' in username:
+            # 提示前端 展示错误信息
+            self.add_error('username', '含有非法字段')
+        # 将钩子函数勾出来的数据再放回去
+        return username
+
+    # 全局钩子
+    def clean(self):
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
+        if not confirm_password == password:
+            self.add_error('confirm_password', '两次密码不一致')
+        # 所有数据再放回去
+        return self.cleaned_data
+
+
+# form_obj = MyForm({'username': 'aaaaaa', 'password': '123', 'email': 'asda'})
+# # 数据有没有效
+# form_obj.is_valid()
+# # 有效的数据
+# form_obj.cleaned_data
+# # 哪些错误
+# form_obj.errors
+#
+# # 多传直接忽略 也不影响
+# # 默认情况下 数据是必须要填写
+
+def ab_formclass(request):
+    form_obj = MyForm()
+    if request.method == 'POST':
+        # 获取输入数据并校验
+        form_obj = MyForm(request.POST)
+        # 判断数据是否合法
+        if form_obj.is_valid():
+            # 如果合法 存储数据
+            return HttpResponse('OK')
+        else:
+            # 展示错误信息到前端
+            pass
+    return render(request, 'ab_formclass.html', locals())
