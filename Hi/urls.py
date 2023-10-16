@@ -9,6 +9,8 @@ urlpatterns = [
     path('filters/', views.filters),
     # Form 组件
     path('ab_form/', views.ab_form, name='ab_form'),
-    path('ab_formclass/', views.ab_formclass, name='ab_formclass')
+    path('ab_formclass/', views.ab_formclass, name='ab_formclass'),
+    # Cookies
+    path('ab_login/',views.ab_login,name='ab_login')
 
 ]

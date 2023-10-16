@@ -256,11 +256,12 @@ class MyForm(forms.Form):
                     RegexValidator(r'^186[0-9]+$', '数字必须以186开头')
                     ])
     gender = forms.ChoiceField(
-        choices=((1,'男'),(2,'女')),
+        choices=((1, '男'), (2, '女')),
         label='性别',
         initial=3,
         widget=forms.RadioSelect()
     )
+
     # 钩子函数
     # 局部钩子 单个字段
     def clean_username(self):
@@ -306,3 +307,83 @@ def ab_formclass(request):
             # 展示错误信息到前端
             pass
     return render(request, 'ab_formclass.html', locals())
+
+
+# 校验用户是否登陆的装饰器
+def login_auth(func):
+    def inner(request, *args, **kwargs):
+        target_url = request.get_full_path()
+        if request.COOKIES.get('username'):
+            return func(request, *args, **kwargs)
+        else:
+            return redirect('/Hi/ab_login/?next=%s' % target_url)
+
+    return inner
+
+
+def ab_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        if username == 'year' and password == '123':
+            # 获取用户登陆前想访问的url
+            target_url = request.GET.get('next')
+            if target_url:
+                obj = redirect(target_url)
+            else:
+                # 保存用户登陆状态
+                obj = redirect('Hi/ab_home/')
+            # 让浏览器记录cookie内容
+            obj.set_cookie('username', 'year666', max_age=30)
+            # obj.delete_cookie('username')
+            # 浏览器不光会存 还会再后面访问中带上
+            return obj
+    return render(request, 'ab_login.html', locals())
+
+
+def ab_home(request):
+    # 获取cookie信息 判断有没有登陆
+    if request.COOKIES.get('username') == 'year666':
+        return render(request, 'ab_home.html', locals())
+
+    return render(request, 'ab_login.html', locals())
+
+
+def ab_session(request):
+    # session 数据是保存在服务段的, 给客户端的是一串随机字符串
+    # 默认情况下操作session 需要django默认的一张django_session表
+    # 数据库迁移命令中会默认创建 默认session过期时间是14天 可以人为修改
+    request.session['username'] = 'year666'
+    request.session.set_expiry()
+    # 括号内 四种参数
+    # 1整数 多少秒
+    # 2日期对象 到指定日期失效
+    # 3 0 浏览器窗口关闭失效
+    # 4 不写 取决于django默认的全局失效时间
+    # 获取
+    # username = request.session.get('username')
+    # request.session.delete() #删除当前会话的所有session 只会删除服务端
+    # request.session.flush() # 浏览器和服务端都清空
+
+
+from django.utils.decorators import method_decorator
+
+'''
+CBV中Django不建议直接在类方法中加装饰器
+'''
+
+
+# @method_decorator(login_auth,name='get') 放式二
+# @method_decorator(login_auth,name='post')
+class MyLogin(View):
+    @method_decorator(login_auth) # 放式三 会直接作用与当前类的所有方法
+    def dispatch(self, request, *args, **kwargs):
+        pass
+
+    @method_decorator(login_auth)  # 放式一
+    def get(self, request):
+        return HttpResponse('')
+
+    @method_decorator(login_auth)
+    def post(self, request):
+        return HttpResponse('')
